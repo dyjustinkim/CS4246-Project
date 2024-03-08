@@ -60,7 +60,7 @@ class Connect4Board:
 
                 # Checks diagonally from top right /
                 case 3:
-                    ofs = (self.columns - self.current_column) - self.current_row
+                    ofs = (self.columns - 1 - self.current_column) - self.current_row
                     array = np.diagonal(np.flip(self.board, axis=1), offset=ofs)
             
             '''
