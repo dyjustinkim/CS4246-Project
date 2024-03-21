@@ -6,13 +6,18 @@ COLUMNS    = 7
 IN_A_ROW = 4
 
 class Connect4Board:
-    def __init__(self, rows=ROWS, columns=COLUMNS):
+    def __init__(self,  board=None, rows=ROWS, columns=COLUMNS):
         self.rows = rows
         self.columns = columns
-        self.board = np.full((rows, columns), '_')
+        if board is not None:
+            # If a board state is provided, directly use it to create the new instance
+            self.board = np.copy(board)
+        else:
+            # If no board state is provided, initialize a new board with all positions empty
+            self.board = np.full((rows, columns), '_', dtype=str)
 
     def display(self):
-        return(self.board)
+        print(self.board)
 
     def drop_piece(self, column, piece):
         '''
@@ -33,10 +38,21 @@ class Connect4Board:
         available moves left in a column
         '''
         if self.board[0][column] == '_':
-            return('True')
-        return('False')
-            
-    def find_winner(self, piece):
+            return True
+        return False
+    
+    def is_full(self):
+        ret = True
+        for c in range(self.columns):
+            if self.board[0][c] == '_':
+                ret = False
+                break
+        return ret
+    
+    def copy(self):
+        return Connect4Board(board=self.board, rows=self.rows, columns=self.columns)
+
+    def check_win(self, piece):
         '''
         Checks if there is a winning combination of 
         pieces in a row, based around the most
@@ -75,8 +91,8 @@ class Connect4Board:
                 else:
                     streak=0
                 if streak==IN_A_ROW:
-                    return("True")
-        return("False")
+                    return True
+        return False
         
 
         

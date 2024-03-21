@@ -4,7 +4,7 @@ def start_game():
     turn = 0
     b1 = connect4.Connect4Board()
 
-    print(b1.display())
+    b1.display()
     print("To play, enter an open column number or type exit to quit.")
     while(turn<42):
         if turn%2==0:
@@ -20,7 +20,7 @@ def start_game():
                 return
             try:
                 move = int(move)
-                if b1.check_move(move)=='True':
+                if b1.check_move(move):
                     b1.drop_piece(move, piece)
                     break
                 else: 
@@ -28,8 +28,8 @@ def start_game():
             except ValueError:
                 print("Enter valid column number!")
  
-        print(b1.display())
-        if(b1.find_winner(piece))=='True':
+        b1.display()
+        if b1.check_win(piece):
             print("Player " + player + " wins!")
             return
 
