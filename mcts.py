@@ -3,6 +3,8 @@ from connect4 import Connect4Board, COLUMNS
 import random
 import math
 
+ITERMAX = 2000
+
 class Node:
     def __init__(self, board, parent=None, move=None, player='x'):
         self.board = board
@@ -65,7 +67,7 @@ def uct(root_board, itermax, player):
             for col in range(COLUMNS):
                 if curr_board_state.check_move(col):
                     possible_moves.append(col)
-            if not possible_moves:
+            if not possible_moves or curr_board_state.check_win('x') or curr_board_state.check_win('o'):
                 break
             new_col = random.choice(possible_moves)
             curr_board_state.drop_piece(new_col, current_player)
@@ -87,12 +89,11 @@ def uct(root_board, itermax, player):
 def two_mcts_agents_play_game():
     board = Connect4Board()
     current_player = 'x'
-    itermax = 1000
     
     while True:
         print(f"Player {current_player}'s turn")
 
-        best_move = uct(root_board = board, itermax = itermax, player = current_player)
+        best_move = uct(root_board = board, itermax = ITERMAX, player = current_player)
         
         board.drop_piece(best_move, current_player)
         
@@ -110,7 +111,6 @@ def two_mcts_agents_play_game():
 def human_mcts_play_game():
     board = Connect4Board()
     current_player = 'x'
-    itermax = 5000
     board.display()
     while True:
         print(f"Player {current_player}'s turn")
@@ -127,7 +127,7 @@ def human_mcts_play_game():
             except ValueError:
                 print("Enter valid column number!")
         else:
-            best_move = uct(root_board = board, itermax = itermax, player = current_player)
+            best_move = uct(root_board = board, itermax = ITERMAX, player = current_player)
             board.drop_piece(best_move, current_player)
         
         board.display()
