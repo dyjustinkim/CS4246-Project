@@ -142,3 +142,12 @@ def human_mcts_play_game():
         current_player = 'o' if current_player == 'x' else 'x'
 
 human_mcts_play_game()
+
+# TODO:
+# Write baseline agents and get MCTS's win rate against it
+#   - Start with "random" agent
+#   - Try out the minimax agent
+# Get MCTS win rate with itself
+
+# Tune MCTS with different values of ITERMAX and C (in uct.select_child)
+# Decide the best parameters of ITERMAX and C
