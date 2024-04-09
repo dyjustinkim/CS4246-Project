@@ -9,6 +9,8 @@ class Connect4Board:
     def __init__(self,  board=None, rows=ROWS, columns=COLUMNS):
         self.rows = rows
         self.columns = columns
+        self.current_column, self.current_row = 0, 0 
+
         if board is not None:
             # If a board state is provided, directly use it to create the new instance
             self.board = np.copy(board)
@@ -31,6 +33,12 @@ class Connect4Board:
                 row[column] = piece
                 return
             self.current_row-=1
+        
+
+    def copy_drop_return(self, column, piece): # copies a board, then drops a piece, then returns the copied board
+        copied = self.copy()
+        copied.drop_piece(column, piece)
+        return copied
 
     def check_move(self, column):
         '''
@@ -50,7 +58,8 @@ class Connect4Board:
         return ret
     
     def copy(self):
-        return Connect4Board(board=self.board, rows=self.rows, columns=self.columns)
+        copy = Connect4Board(board=self.board, rows=self.rows, columns=self.columns)
+        return copy
 
     def check_win(self, piece):
         '''
@@ -93,8 +102,6 @@ class Connect4Board:
                 if streak==IN_A_ROW:
                     return True
         return False
-        
 
-        
 
 

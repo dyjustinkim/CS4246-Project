@@ -1,0 +1,46 @@
+from connect4 import Connect4Board, COLUMNS
+
+import mcts
+import minimax
+
+ITERMAX = 2000
+
+def minimax_vs_mcts(first):
+    board = Connect4Board()
+    current_player = 'x'
+    curr_algo = first
+    while True:
+        if curr_algo == 'mcts':
+            move = mcts.uct(root_board = board, itermax = ITERMAX, player = current_player)
+        else:
+            move = minimax.minimax(current_player, board)
+        board.drop_piece(move, current_player)
+        
+        if board.check_win(current_player) == True:
+            board.display()
+            return(curr_algo)
+        
+        if board.is_full() == True:
+            board.display()
+            return
+        
+        current_player = 'o' if current_player == 'x' else 'x'
+        curr_algo = 'mm' if curr_algo == 'mcts' else 'mcts'
+
+def test_winrates(games): #test mcts winrates in specified matches between minimax and mcts
+    mcts_wins = 0
+    algo = "mcts"
+    for g in range(games):
+        print("first turn algo: " + algo)
+        winner = minimax_vs_mcts(algo)
+        if winner == 'mm':
+            print("mm win")
+        elif winner == 'mcts':
+            mcts_wins += 1
+            print('mcts win')
+        else: 
+            print('draw')
+        algo = "mm" if algo == "mcts" else "mcts"
+    print("mcts winrate: " + str(float(mcts_wins)/games))
+
+test_winrates(100)
