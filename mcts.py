@@ -141,7 +141,7 @@ def human_mcts_play_game():
         
         current_player = 'o' if current_player == 'x' else 'x'
 
-human_mcts_play_game()
+#two_mcts_agents_play_game()
 
 # TODO:
 # Write baseline agents and get MCTS's win rate against it
