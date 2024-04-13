@@ -174,4 +174,4 @@ def human_minimax_play_game(human_first=True):
             return
         turn = False if turn == True else True
     
-human_minimax_play_game(True)
+# human_minimax_play_game(True)

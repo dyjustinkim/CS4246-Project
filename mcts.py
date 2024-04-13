@@ -4,6 +4,7 @@ import random
 import math
 
 ITERMAX = 2000
+CONST_C = math.sqrt(2)
 
 class Node:
     def __init__(self, board, parent=None, move=None, player='x'):
@@ -20,11 +21,11 @@ class Node:
         self.player = player
         self.next_player = 'o' if player == 'x' else 'x'
 
-    def uct_select_child(self):
+    def uct_select_child(self, const_c):
         # UCT formula
         log_parent_visits = math.log(self.visits)
-        C = math.sqrt(2)
-        return max(self.children, key=lambda child: child.wins / child.visits + C * math.sqrt(log_parent_visits / child.visits))
+
+        return max(self.children, key=lambda child: child.wins / child.visits + const_c * math.sqrt(log_parent_visits / child.visits))
 
     def add_child(self, new_col, state):
         new_node = Node(board = state, parent=self, move=new_col, player=self.next_player)
@@ -39,7 +40,7 @@ class Node:
 
 
 
-def uct(root_board, itermax, player):
+def uct(root_board, itermax, player, const_c):
     rootnode = Node(board=root_board, player=player)
 
     for _ in range(itermax):
@@ -51,7 +52,7 @@ def uct(root_board, itermax, player):
         while node.untried_cols == [] and node.children != []:
             # DFS into the deepest leaf node
             # The loop continues until it finds a node that either can be expanded (i.e., has untried moves) or is a terminal node with no children.
-            node = node.uct_select_child()
+            node = node.uct_select_child(const_c)
             curr_board_state.drop_piece(node.move, node.player)
 
         # Expansion
@@ -93,7 +94,7 @@ def two_mcts_agents_play_game():
     while True:
         print(f"Player {current_player}'s turn")
 
-        best_move = uct(root_board = board, itermax = ITERMAX, player = current_player)
+        best_move = uct(root_board = board, itermax = ITERMAX, player = current_player, const_c = CONST_C)
         
         board.drop_piece(best_move, current_player)
         
@@ -127,7 +128,7 @@ def human_mcts_play_game():
             except ValueError:
                 print("Enter valid column number!")
         else:
-            best_move = uct(root_board = board, itermax = ITERMAX, player = current_player)
+            best_move = uct(root_board = board, itermax = ITERMAX, player = current_player, const_c = CONST_C)
             board.drop_piece(best_move, current_player)
         
         board.display()
@@ -154,7 +155,7 @@ def mcts_vs_random(first):
     curr_algo = first
     while True:
         if curr_algo == 'mcts':
-            move = uct(root_board = board, itermax = ITERMAX, player = current_player)
+            move = uct(root_board = board, itermax = ITERMAX, player = current_player, const_c = CONST_C)
         else:
             move = random_move(board)
         board.drop_piece(move, current_player)
