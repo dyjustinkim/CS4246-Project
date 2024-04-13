@@ -20,6 +20,7 @@ class Connect4Board:
 
     def display(self):
         print(self.board)
+        return self.board
 
     def drop_piece(self, column, piece):
         '''
@@ -57,18 +58,56 @@ class Connect4Board:
                 break
         return ret
     
+    def get_valid_moves(self):
+        valid_moves = []
+        for c in range(self.columns):
+            if self.check_move(c):
+                valid_moves.append(c)
+        return valid_moves
+
+    def reward_and_done(self):
+        """Provides reward and 'done' status after a move."""
+        reward = 0
+
+        done = self.check_win('x') or self.check_win('o') or self.is_full()
+
+        if self.check_win('x', in_a_row = 2):  # Agent is 'x'
+            reward += 500
+            
+        if self.check_win('o', in_a_row = 2):
+            reward += -1000
+        
+        if self.check_win('x', in_a_row = 3):  # Agent is 'x'
+            reward += 500000
+            
+        if self.check_win('o', in_a_row = 3):
+            reward += -1000000
+
+        if self.check_win('x'):  # Agent is 'x'
+            #print('win')
+            return 1e9, done  # Large positive reward for winning
+            
+        elif self.check_win('o'):
+            #print('lose')
+            return -1e9, done  # Large negative reward for losing
+        
+        elif self.is_full():
+            return 0, done  # Neutral (or slightly negative) reward for a draw
+        else:
+            return reward, done  # Small positive reward to encourage continuing the game
+
     def copy(self):
         copy = Connect4Board(board=self.board, rows=self.rows, columns=self.columns)
         return copy
 
-    def check_win(self, piece):
+    def check_win(self, piece, in_a_row = IN_A_ROW):
         '''
         Checks if there is a winning combination of 
         pieces in a row, based around the most
         recently dropped piece
         '''
 
-        for num in range(4):
+        for num in range(in_a_row):
             match num:
                 # Checks for a horiz3ontal combination
                 case 0:
@@ -99,7 +138,7 @@ class Connect4Board:
                     streak+=1
                 else:
                     streak=0
-                if streak==IN_A_ROW:
+                if streak==in_a_row:
                     return True
         return False
 
