@@ -141,13 +141,54 @@ def human_mcts_play_game():
         
         current_player = 'o' if current_player == 'x' else 'x'
 
-#two_mcts_agents_play_game()
+def random_move(board):
+    loop = True
+    while loop:
+        move = random.randint(0, (board.columns - 1))
+        if board.check_move(move) == True:
+           return move
 
-# TODO:
-# Write baseline agents and get MCTS's win rate against it
-#   - Start with "random" agent
-#   - Try out the minimax agent
-# Get MCTS win rate with itself
+def mcts_vs_random(first):
+    board = Connect4Board()
+    current_player = 'x'
+    curr_algo = first
+    while True:
+        if curr_algo == 'mcts':
+            move = uct(root_board = board, itermax = ITERMAX, player = current_player)
+        else:
+            move = random_move(board)
+        board.drop_piece(move, current_player)
+        
+        if board.check_win(current_player) == True:
+            board.display()
+            return(curr_algo)
+        
+        if board.is_full() == True:
+            board.display()
+            return
+        
+        current_player = 'o' if current_player == 'x' else 'x'
+        curr_algo = 'rand' if curr_algo == 'mcts' else 'mcts'
+
+def test_winrates_random(games): #test mcts winrates in specified matches between minimax and mcts
+    mcts_wins = 0
+    algo = "mcts"
+    for g in range(games):
+        print("first turn algo: " + algo)
+        winner = mcts_vs_random(algo)
+        if winner == 'rand':
+            print("rand win")
+        elif winner == 'mcts':
+            mcts_wins += 1
+            print('mcts win')
+        else: 
+            print('draw')
+        algo = "rand" if algo == "mcts" else "mcts"
+    print("mcts winrate: " + str(float(mcts_wins)/games))
+
+# human_mcts_play_game()
 
 # Tune MCTS with different values of ITERMAX and C (in uct.select_child)
 # Decide the best parameters of ITERMAX and C
+
+#test_winrates_random(5)
